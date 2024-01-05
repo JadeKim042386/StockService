@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.zerobase'
-version = '0.0.1-SNAPSHOT'
+version = '0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.apache.commons:commons-collections4:4.4'
 	implementation 'org.jsoup:jsoup:1.17.2'
+	runtimeOnly 'com.h2database:h2'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
