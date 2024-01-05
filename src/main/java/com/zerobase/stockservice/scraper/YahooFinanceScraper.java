@@ -4,7 +4,6 @@ import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.DividendDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
 import com.zerobase.stockservice.dto.constants.Month;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,14 +14,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YahooFinanceScraper {
+public class YahooFinanceScraper implements Scraper {
     private static final String STATISTICS_URL = "https://finance.yahoo.com/quote/%s/history?period1=%d&period2=%d&interval=1mo";
+    private static final String SUMMARY_URL = "https://finance.yahoo.com/quote/%s?p=%s";
     private static final long START_TIME = 86400; //60 * 60 * 24
 
+    @Override
     public ScrapedResult scrap(CompanyDto company) {
         try {
-            Connection connect = Jsoup.connect(String.format(STATISTICS_URL, company.getTicker(), START_TIME, System.currentTimeMillis() / 1000));
-            Document document = connect.get();
+            Document document = Jsoup.connect(String.format(STATISTICS_URL, company.getTicker(), START_TIME, System.currentTimeMillis() / 1000)).get();
             Elements parsingDivs = document.getElementsByAttributeValue("data-test", "historical-prices");
             Element tableEle = parsingDivs.get(0);
 
@@ -56,7 +56,19 @@ public class YahooFinanceScraper {
         }
     }
 
+    @Override
     public CompanyDto scrapCompanyByTicker(String ticker) {
-        return null;
+        try {
+            Document document = Jsoup.connect(String.format(SUMMARY_URL, ticker, ticker)).get();
+            Element titleEle = document.getElementsByTag("h1").get(0);
+            String title = titleEle.text().split(" - ")[1].trim();
+            return CompanyDto.builder()
+                    .ticker(ticker)
+                    .name(title)
+                    .build();
+        } catch (IOException e) {
+            //TODO: 예외처리
+            throw new RuntimeException(e);
+        }
     }
 }
