@@ -81,4 +81,21 @@ class CompanyControllerTest {
                 .andExpect(jsonPath("$.content[0].name").value(name));
         //then
     }
+
+    @DisplayName("[GET] 입력 키워드로 시작하는 모든 기업 조회 요청")
+    @Test
+    void autocomplete() throws Exception {
+        //given
+        String name = "NVIDIA";
+        given(companyService.getCompanyNamesByKeyword(anyString()))
+                .willReturn(List.of(name));
+        //when
+        mvc.perform(
+                get("/company/autocomplete")
+                        .queryParam("keyword", "n")
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0]").value(name));
+        //then
+    }
 }

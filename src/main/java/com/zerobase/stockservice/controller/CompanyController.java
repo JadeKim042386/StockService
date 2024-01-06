@@ -3,11 +3,13 @@ package com.zerobase.stockservice.controller;
 import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.service.CompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,24 +18,28 @@ import java.util.Optional;
 public class CompanyController {
     private final CompanyService companyService;
 
+    /**
+     * keyword로 시작하는 모든 기업 조회
+     */
     @GetMapping("/autocomplete")
-    public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+    public ResponseEntity<List<String>> autocomplete(@RequestParam String keyword) {
+        return ResponseEntity.ok(companyService.getCompanyNamesByKeyword(keyword));
     }
 
     @GetMapping
-    public ResponseEntity<?> searchCompany(final Pageable pageable) {
+    public ResponseEntity<Page<CompanyDto>> searchCompany(final Pageable pageable) {
         return ResponseEntity.ok(companyService.findAllCompany(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<?> addCompany(@RequestBody CompanyDto request) {
+    public ResponseEntity<CompanyDto> addCompany(@RequestBody CompanyDto request) {
         String ticker = request.getTicker().trim();
         if (ObjectUtils.isEmpty(ticker)) {
             //TODO: 예외 처리
             throw new RuntimeException("ticker is empty");
         }
-        return ResponseEntity.ok(companyService.save(ticker));
+        CompanyDto companyDto = companyService.save(ticker);
+        return ResponseEntity.ok(companyDto);
     }
     
     @DeleteMapping

@@ -110,4 +110,23 @@ class CompanyServiceTest {
         assertThat(companies.getContent().get(0).getName()).isEqualTo(name);
         assertThat(companies.getContent().get(0).getTicker()).isEqualTo(ticker);
     }
+
+    @DisplayName("입력 키워드로 시작하는 기업들 조회")
+    @Test
+    void getCompanyNamesByKeyword() {
+        //given
+        String ticker = "NVDA";
+        String name = "NVIDIA";
+        Company company = Company.builder()
+                .ticker(ticker)
+                .name(name)
+                .build();
+        given(companyRepository.findByNameStartingWithIgnoreCase(any(), anyString()))
+                .willReturn(List.of(company));
+        //when
+        List<String> companies = companyService.getCompanyNamesByKeyword("N");
+        //then
+        assertThat(companies.size()).isEqualTo(1);
+        assertThat(companies.get(0)).isEqualTo(name);
+    }
 }

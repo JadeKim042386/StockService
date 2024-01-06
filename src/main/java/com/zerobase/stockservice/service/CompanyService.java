@@ -52,4 +52,9 @@ public class CompanyService {
 
         return companyDto;
     }
+
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        return companyRepository.findByNameStartingWithIgnoreCase(Pageable.ofSize(10), keyword).stream()
+                .map(Company::getName).collect(Collectors.toList());
+    }
 }
