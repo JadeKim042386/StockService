@@ -8,12 +8,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Service
 public class YahooFinanceScraper implements Scraper {
     private static final String STATISTICS_URL = "https://finance.yahoo.com/quote/%s/history?period1=%d&period2=%d&interval=1mo";
     private static final String SUMMARY_URL = "https://finance.yahoo.com/quote/%s?p=%s";
@@ -34,7 +37,7 @@ public class YahooFinanceScraper implements Scraper {
                     continue;
                 }
                 String[] splits = txt.split(" ");
-                int month = Month.strToNumber(splits[0]);
+                int month = Month.strToNumber(splits[0].toUpperCase());
                 if (month < 0) {
                     //TODO: 예외처리
                     throw new RuntimeException("Unexpected Month enum value -> " + splits[0]);
@@ -57,18 +60,21 @@ public class YahooFinanceScraper implements Scraper {
     }
 
     @Override
-    public CompanyDto scrapCompanyByTicker(String ticker) {
+    public Optional<CompanyDto> scrapCompanyByTicker(String ticker) {
         try {
             Document document = Jsoup.connect(String.format(SUMMARY_URL, ticker, ticker)).get();
             Element titleEle = document.getElementsByTag("h1").get(0);
-            String title = titleEle.text().split(" - ")[1].trim();
-            return CompanyDto.builder()
+            String title = titleEle.text().split("\\(")[0].trim();
+            return Optional.of(
+                CompanyDto.builder()
                     .ticker(ticker)
                     .name(title)
-                    .build();
+                    .build()
+            );
         } catch (IOException e) {
             //TODO: 예외처리
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return Optional.empty();
     }
 }

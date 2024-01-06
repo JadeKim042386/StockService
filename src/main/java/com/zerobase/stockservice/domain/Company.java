@@ -1,12 +1,8 @@
 package com.zerobase.stockservice.domain;
 
 import lombok.*;
-import org.springframework.stereotype.Service;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Setter
