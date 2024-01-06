@@ -21,4 +21,11 @@ public class DividendDto {
                 .dividend(dividend)
                 .build();
     }
+
+    public static DividendDto fromEntity(Dividend dividend) {
+        return DividendDto.builder()
+                .dividend(dividend.getDividend())
+                .date(dividend.getDate())
+                .build();
+    }
 }

@@ -7,9 +7,12 @@ import com.zerobase.stockservice.repository.CompanyRepository;
 import com.zerobase.stockservice.repository.DividendRepository;
 import com.zerobase.stockservice.scraper.Scraper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +31,11 @@ public class CompanyService {
             throw new RuntimeException("already exists ticker - " + ticker);
         }
         return storeCompanyAndDividend(ticker);
+    }
+
+    public Page<CompanyDto> findAllCompany(Pageable pageable) {
+        return companyRepository.findAll(pageable)
+                .map(CompanyDto::fromEntity);
     }
 
     public CompanyDto storeCompanyAndDividend(String ticker) {

@@ -18,4 +18,11 @@ public class CompanyDto {
                 .name(name)
                 .build();
     }
+
+    public static CompanyDto fromEntity(Company company) {
+        return CompanyDto.builder()
+                .name(company.getName())
+                .ticker(company.getTicker())
+                .build();
+    }
 }

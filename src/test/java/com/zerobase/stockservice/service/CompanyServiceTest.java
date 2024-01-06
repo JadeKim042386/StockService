@@ -16,11 +16,15 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -81,5 +85,29 @@ class CompanyServiceTest {
         assertThat(dividendCaptor.getValue().get(0).getDate()).isEqualTo(time);
         assertThat(dto.getName()).isEqualTo(name);
         assertThat(dto.getTicker()).isEqualTo(ticker);
+    }
+
+    @DisplayName("기업 정보 전체 조회")
+    @Test
+    void findAllCompany() {
+        //given
+        String ticker = "NVDA";
+        String name = "NVIDIA";
+        Company company = Company.builder()
+                .ticker(ticker)
+                .name(name)
+                .build();
+        Pageable pageable = Pageable.ofSize(2);
+        Page<Company> page = new PageImpl<>(List.of(company, company), pageable, 3);
+        given(companyRepository.findAll(any(Pageable.class)))
+                .willReturn(page);
+        //when
+        Page<CompanyDto> companies = companyService.findAllCompany(pageable);
+        //then
+        assertThat(companies.getTotalPages()).isEqualTo(2);
+        assertThat(companies.getContent().size()).isEqualTo(2);
+        assertThat(companies.getTotalElements()).isEqualTo(3);
+        assertThat(companies.getContent().get(0).getName()).isEqualTo(name);
+        assertThat(companies.getContent().get(0).getTicker()).isEqualTo(ticker);
     }
 }
