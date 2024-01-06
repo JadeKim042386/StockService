@@ -5,7 +5,6 @@ import com.zerobase.stockservice.domain.Dividend;
 import com.zerobase.stockservice.dto.ScrapedResult;
 import com.zerobase.stockservice.repository.CompanyRepository;
 import com.zerobase.stockservice.repository.DividendRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;

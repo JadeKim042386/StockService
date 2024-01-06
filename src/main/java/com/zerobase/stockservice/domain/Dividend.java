@@ -2,9 +2,7 @@ package com.zerobase.stockservice.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,6 +11,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity(name = "DIVIDEND")
+@Table(
+        uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"companyId", "date"}
+        )
+    }
+)
 public class Dividend {
     @Id
     @GeneratedValue
