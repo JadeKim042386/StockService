@@ -9,4 +9,6 @@ import java.util.List;
 public interface DividendRepository extends JpaRepository<Dividend, Long> {
     List<Dividend> findAllByCompanyId(Long companyId);
     boolean existsByCompanyIdAndDate(Long companyId, LocalDateTime date);
+
+    void deleteAllByCompanyId(Long id);
 }

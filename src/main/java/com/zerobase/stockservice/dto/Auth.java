@@ -4,8 +4,6 @@ import com.zerobase.stockservice.domain.Member;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import java.util.List;
 import java.util.Set;
 
 public class Auth {

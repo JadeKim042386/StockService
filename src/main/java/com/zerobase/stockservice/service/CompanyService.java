@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,23 +39,33 @@ public class CompanyService {
                 .map(CompanyDto::fromEntity);
     }
 
-    public CompanyDto storeCompanyAndDividend(String ticker) {
+    public List<String> getCompanyNamesByKeyword(String keyword) {
+        return companyRepository.findByNameStartingWithIgnoreCase(Pageable.ofSize(10), keyword).stream()
+                .map(Company::getName).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public String deleteCompany(String ticker) {
+        //TODO: 예외 처리
+        Company company = companyRepository.findByTicker(ticker)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 기업입니다."));
+        dividendRepository.deleteAllByCompanyId(company.getId());
+        companyRepository.delete(company);
+        return company.getName();
+    }
+
+    private CompanyDto storeCompanyAndDividend(String ticker) {
         //TODO: 예외 처리
         CompanyDto companyDto = yahooFinanceScraper.scrapCompanyByTicker(ticker)
                 .orElseThrow(() -> new RuntimeException("failed to scrap ticker - " + ticker));
         Company companyEntity = companyRepository.save(companyDto.toEntity());
         ScrapedResult scrapedResult = yahooFinanceScraper.scrap(companyDto);
         dividendRepository.saveAll(
-            scrapedResult.getDividends().stream()
-                    .map(e -> e.toEntity(companyEntity.getId()))
-                    .collect(Collectors.toList())
+                scrapedResult.getDividends().stream()
+                        .map(e -> e.toEntity(companyEntity.getId()))
+                        .collect(Collectors.toList())
         );
 
         return companyDto;
-    }
-
-    public List<String> getCompanyNamesByKeyword(String keyword) {
-        return companyRepository.findByNameStartingWithIgnoreCase(Pageable.ofSize(10), keyword).stream()
-                .map(Company::getName).collect(Collectors.toList());
     }
 }
