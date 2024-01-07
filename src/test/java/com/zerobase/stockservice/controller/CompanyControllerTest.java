@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,6 +32,7 @@ class CompanyControllerTest {
     @Autowired private ObjectMapper objectMapper;
 
     @DisplayName("[POST] 특정 기업의 ticker를 통한 배당금 정보 저장 요청")
+    @WithMockUser
     @Test
     void addCompany() throws Exception {
         //given
