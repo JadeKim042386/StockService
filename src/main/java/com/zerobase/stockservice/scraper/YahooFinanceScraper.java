@@ -46,10 +46,10 @@ public class YahooFinanceScraper implements Scraper {
                 int year = Integer.parseInt(splits[2]);
                 String dividend = splits[3];
                 dividends.add(
-                        DividendDto.builder()
-                                .date(LocalDateTime.of(year, month, day, 0, 0))
-                                .dividend(dividend)
-                                .build()
+                        DividendDto.of(
+                                LocalDateTime.of(year, month, day, 0, 0),
+                                dividend
+                        )
                 );
             }
             return ScrapedResult.of(company, dividends);
@@ -65,12 +65,7 @@ public class YahooFinanceScraper implements Scraper {
             Document document = Jsoup.connect(String.format(SUMMARY_URL, ticker, ticker)).get();
             Element titleEle = document.getElementsByTag("h1").get(0);
             String title = titleEle.text().split("\\(")[0].trim();
-            return Optional.of(
-                CompanyDto.builder()
-                    .ticker(ticker)
-                    .name(title)
-                    .build()
-            );
+            return Optional.of(CompanyDto.of(ticker, title));
         } catch (IOException e) {
             //TODO: 예외처리
             e.printStackTrace();

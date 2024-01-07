@@ -1,18 +1,30 @@
 package com.zerobase.stockservice.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.zerobase.stockservice.domain.Dividend;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DividendDto {
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
     private String dividend;
+
+    public static DividendDto of(LocalDateTime date, String dividend) {
+        return new DividendDto(date, dividend);
+    }
 
     public Dividend toEntity(Long companyId) {
         return Dividend.builder()
@@ -23,9 +35,6 @@ public class DividendDto {
     }
 
     public static DividendDto fromEntity(Dividend dividend) {
-        return DividendDto.builder()
-                .dividend(dividend.getDividend())
-                .date(dividend.getDate())
-                .build();
+        return DividendDto.of(dividend.getDate(), dividend.getDividend());
     }
 }

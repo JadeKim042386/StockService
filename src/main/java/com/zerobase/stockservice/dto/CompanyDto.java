@@ -1,16 +1,22 @@
 package com.zerobase.stockservice.dto;
 
 import com.zerobase.stockservice.domain.Company;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CompanyDto {
     private String ticker;
     private String name;
+
+    public static CompanyDto of(String ticker, String name) {
+        return new CompanyDto(ticker, name);
+    }
 
     public Company toEntity() {
         return Company.builder()
@@ -20,9 +26,6 @@ public class CompanyDto {
     }
 
     public static CompanyDto fromEntity(Company company) {
-        return CompanyDto.builder()
-                .name(company.getName())
-                .ticker(company.getTicker())
-                .build();
+        return CompanyDto.of(company.getTicker(), company.getName());
     }
 }

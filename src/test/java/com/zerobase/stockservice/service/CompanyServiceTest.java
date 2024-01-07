@@ -44,10 +44,7 @@ class CompanyServiceTest {
         //given
         String name = "NVIDIA";
         String ticker = "NVDA";
-        CompanyDto companyDto = CompanyDto.builder()
-                .name(name)
-                .ticker(ticker)
-                .build();
+        CompanyDto companyDto = CompanyDto.of(ticker, name);
         given(companyRepository.existsByTicker(anyString())).willReturn(false);
         given(scraper.scrapCompanyByTicker(anyString()))
                 .willReturn(Optional.of(companyDto));
@@ -59,10 +56,7 @@ class CompanyServiceTest {
                             .build());
         String divide = "0.04";
         LocalDateTime time = LocalDateTime.now();
-        DividendDto dividendDto = DividendDto.builder()
-                .dividend(divide)
-                .date(time)
-                .build();
+        DividendDto dividendDto = DividendDto.of(time, divide);
         given(scraper.scrap(any()))
                 .willReturn(ScrapedResult.of(companyDto, List.of(dividendDto)));
         Dividend dividend = Dividend.builder()

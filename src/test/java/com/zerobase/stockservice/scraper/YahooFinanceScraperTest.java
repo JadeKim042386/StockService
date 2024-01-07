@@ -22,10 +22,7 @@ class YahooFinanceScraperTest {
         //given
         String ticker = "NVDA";
         String name = "NVIDIA";
-        CompanyDto companyDto = CompanyDto.builder()
-                                    .ticker(ticker)
-                                    .name(name)
-                                    .build();
+        CompanyDto companyDto = CompanyDto.of(ticker, name);
         //when
         ScrapedResult scrapedResult = yahooFinanceScraper.scrap(companyDto);
         //then

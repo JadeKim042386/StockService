@@ -33,8 +33,8 @@ class FinanceControllerTest {
         String companyName = "NVIDIA";
         LocalDateTime now = LocalDateTime.now();
         String dividend = "0.05";
-        CompanyDto companyDto = CompanyDto.builder().name(companyName).ticker(ticker).build();
-        List<DividendDto> dividendDtos = List.of(DividendDto.builder().dividend(dividend).date(now).build());
+        CompanyDto companyDto = CompanyDto.of(ticker, companyName);
+        List<DividendDto> dividendDtos = List.of(DividendDto.of(now, dividend));
         given(financeService.getDividendByCompanyName(anyString()))
                 .willReturn(ScrapedResult.of(companyDto, dividendDtos));
         //when

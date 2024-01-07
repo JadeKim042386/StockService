@@ -37,16 +37,13 @@ class CompanyControllerTest {
         String ticker = "NVDA";
         String name = "NVIDIA";
         given(companyService.save(anyString()))
-                .willReturn(CompanyDto.builder()
-                        .ticker(ticker)
-                        .name(name)
-                        .build());
+                .willReturn(CompanyDto.of(ticker, name));
         //when
         mvc.perform(
                 post("/company")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
-                                CompanyDto.builder().ticker(ticker).build()
+                                CompanyDto.of(ticker, null)
                         ))
         )
                 .andExpect(status().isOk())
@@ -61,10 +58,7 @@ class CompanyControllerTest {
         //given
         String ticker = "NVDA";
         String name = "NVIDIA";
-        CompanyDto companyDto = CompanyDto.builder()
-                .ticker(ticker)
-                .name(name)
-                .build();
+        CompanyDto companyDto = CompanyDto.of(ticker, name);
         Pageable pageable = Pageable.ofSize(2);
         Page<CompanyDto> page = new PageImpl<>(List.of(companyDto, companyDto), pageable, 3);
         given(companyService.findAllCompany(any()))

@@ -47,10 +47,7 @@ class ScraperSchedulerTest {
                 .build();
         LocalDateTime now = LocalDateTime.now();
         String divide = "0.04";
-        DividendDto dividendDto = DividendDto.builder()
-                .date(now)
-                .dividend(divide)
-                .build();
+        DividendDto dividendDto = DividendDto.of(now, divide);
         given(companyRepository.findAll()).willReturn(List.of(company));
         given(scraper.scrap(any())).willReturn(ScrapedResult.of(CompanyDto.fromEntity(company), List.of(dividendDto)));
         given(dividendRepository.existsByCompanyIdAndDate(anyLong(), any())).willReturn(false);
