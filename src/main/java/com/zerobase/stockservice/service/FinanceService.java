@@ -6,6 +6,8 @@ import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.DividendDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
 import com.zerobase.stockservice.dto.constants.CacheKey;
+import com.zerobase.stockservice.exception.CompanyException;
+import com.zerobase.stockservice.exception.ErrorCode;
 import com.zerobase.stockservice.repository.CompanyRepository;
 import com.zerobase.stockservice.repository.DividendRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,8 @@ public class FinanceService {
 
     @Cacheable(value = CacheKey.KEY_FINANCE, key = "#companyName")
     public ScrapedResult getDividendByCompanyName(String companyName) {
-        //TODO: 예외 처리
         Company company = companyRepository.findByName(companyName)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(() -> new CompanyException(ErrorCode.NOT_FOUND_COMPANY));
         List<Dividend> dividends = dividendRepository.findAllByCompanyId(company.getId());
         return ScrapedResult.of(
                 CompanyDto.fromEntity(company),

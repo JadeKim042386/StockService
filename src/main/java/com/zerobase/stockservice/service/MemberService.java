@@ -2,6 +2,8 @@ package com.zerobase.stockservice.service;
 
 import com.zerobase.stockservice.domain.Member;
 import com.zerobase.stockservice.dto.Auth;
+import com.zerobase.stockservice.exception.AuthException;
+import com.zerobase.stockservice.exception.ErrorCode;
 import com.zerobase.stockservice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,27 +25,28 @@ public class MemberService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //TODO: 예외 처리
-        return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("couldn't find user - " + username));
+        return getUser(username);
     }
 
     @Transactional
     public Member register(Auth.SignUp member) {
-        boolean exists = memberRepository.existsByUsername(member.getUsername());
-        if (exists) {
-            throw new RuntimeException("이미 사용 중인 아이디입니다.");
+        if (memberRepository.existsByUsername(member.getUsername())) {
+            throw new AuthException(ErrorCode.ALREADY_EXIST_USERNAME);
         }
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member.toEntity());
     }
 
     public Member authenticate(Auth.SignIn member) {
-        Member user = memberRepository.findByUsername(member.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 ID 입니다."));
+        Member user = getUser(member.getUsername());
         if (!passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new AuthException(ErrorCode.INVALID_PASSWORD);
         }
         return user;
+    }
+
+    private Member getUser(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new AuthException(ErrorCode.NOT_FOUND_MEMBER));
     }
 }

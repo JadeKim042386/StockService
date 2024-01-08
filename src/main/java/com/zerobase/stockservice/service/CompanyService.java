@@ -3,6 +3,8 @@ package com.zerobase.stockservice.service;
 import com.zerobase.stockservice.domain.Company;
 import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
+import com.zerobase.stockservice.exception.CompanyException;
+import com.zerobase.stockservice.exception.ErrorCode;
 import com.zerobase.stockservice.repository.CompanyRepository;
 import com.zerobase.stockservice.repository.DividendRepository;
 import com.zerobase.stockservice.scraper.Scraper;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,8 +29,7 @@ public class CompanyService {
     @Transactional
     public CompanyDto save(String ticker) {
         if (companyRepository.existsByTicker(ticker)) {
-            //TODO: 예외 처리
-            throw new RuntimeException("already exists ticker - " + ticker);
+            throw new CompanyException(ErrorCode.ALREADY_EXIST_TICKER);
         }
         return storeCompanyAndDividend(ticker);
     }
@@ -46,18 +46,16 @@ public class CompanyService {
 
     @Transactional
     public String deleteCompany(String ticker) {
-        //TODO: 예외 처리
         Company company = companyRepository.findByTicker(ticker)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 기업입니다."));
+                .orElseThrow(() -> new CompanyException(ErrorCode.NOT_FOUND_COMPANY));
         dividendRepository.deleteAllByCompanyId(company.getId());
         companyRepository.delete(company);
         return company.getName();
     }
 
     private CompanyDto storeCompanyAndDividend(String ticker) {
-        //TODO: 예외 처리
         CompanyDto companyDto = yahooFinanceScraper.scrapCompanyByTicker(ticker)
-                .orElseThrow(() -> new RuntimeException("failed to scrap ticker - " + ticker));
+                .orElseThrow(() -> new CompanyException(ErrorCode.FAILED_SCRAP));
         Company companyEntity = companyRepository.save(companyDto.toEntity());
         ScrapedResult scrapedResult = yahooFinanceScraper.scrap(companyDto);
         dividendRepository.saveAll(

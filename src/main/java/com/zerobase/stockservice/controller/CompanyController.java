@@ -2,6 +2,8 @@ package com.zerobase.stockservice.controller;
 
 import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.constants.CacheKey;
+import com.zerobase.stockservice.exception.CompanyException;
+import com.zerobase.stockservice.exception.ErrorCode;
 import com.zerobase.stockservice.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
@@ -43,8 +45,7 @@ public class CompanyController {
     public ResponseEntity<CompanyDto> addCompany(@RequestBody CompanyDto request) {
         String ticker = request.getTicker().trim();
         if (ObjectUtils.isEmpty(ticker)) {
-            //TODO: 예외 처리
-            throw new RuntimeException("ticker is empty");
+            throw new CompanyException(ErrorCode.EMPTY_TICKER);
         }
         CompanyDto companyDto = companyService.save(ticker);
         return ResponseEntity.ok(companyDto);
@@ -61,8 +62,7 @@ public class CompanyController {
     public void clearFinanceCache(String companyName) {
         Cache cache = redisCacheManager.getCache(CacheKey.KEY_FINANCE);
         if (Objects.isNull(cache)) {
-            //TODO: 예외 처리
-            throw new NullPointerException("캐시가 없습니다.");
+            throw new CompanyException(ErrorCode.NOT_EXIST_CACHE);
         }
         cache.evict(companyName);
     }

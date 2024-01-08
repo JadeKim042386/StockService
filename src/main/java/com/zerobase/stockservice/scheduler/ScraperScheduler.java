@@ -41,13 +41,12 @@ public class ScraperScheduler {
                             .map(e -> e.toEntity(company.getId()))
                             .toList()
             );
-        }
-        try {
-            Thread.sleep(3000); //3 seconds
-        } catch (InterruptedException e) {
-            //TODO: 예외 처리
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
+            try {
+                Thread.sleep(3000); //3 seconds
+            } catch (InterruptedException e) {
+                log.error("스케줄러로 배당금 정보를 스크래핑하던 중 스레드 인터럽트가 발생했습니다. - {}", company.getName());
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }

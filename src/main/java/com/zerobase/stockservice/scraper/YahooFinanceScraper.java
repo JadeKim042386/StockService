@@ -4,6 +4,9 @@ import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.DividendDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
 import com.zerobase.stockservice.dto.constants.Month;
+import com.zerobase.stockservice.exception.ErrorCode;
+import com.zerobase.stockservice.exception.ScraperException;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class YahooFinanceScraper implements Scraper {
     private static final String STATISTICS_URL = "https://finance.yahoo.com/quote/%s/history?period1=%d&period2=%d&interval=1mo";
@@ -24,8 +28,9 @@ public class YahooFinanceScraper implements Scraper {
 
     @Override
     public ScrapedResult scrap(CompanyDto company) {
+        String url = String.format(STATISTICS_URL, company.getTicker(), START_TIME, System.currentTimeMillis() / 1000);
         try {
-            Document document = Jsoup.connect(String.format(STATISTICS_URL, company.getTicker(), START_TIME, System.currentTimeMillis() / 1000)).get();
+            Document document = Jsoup.connect(url).get();
             Elements parsingDivs = document.getElementsByAttributeValue("data-test", "historical-prices");
             Element tableEle = parsingDivs.get(0);
 
@@ -39,8 +44,7 @@ public class YahooFinanceScraper implements Scraper {
                 String[] splits = txt.split(" ");
                 int month = Month.strToNumber(splits[0].toUpperCase());
                 if (month < 0) {
-                    //TODO: 예외처리
-                    throw new RuntimeException("Unexpected Month enum value -> " + splits[0]);
+                    throw new ScraperException(ErrorCode.INVALID_ENUM);
                 }
                 int day = Integer.parseInt(splits[1].replace(",", ""));
                 int year = Integer.parseInt(splits[2]);
@@ -54,21 +58,21 @@ public class YahooFinanceScraper implements Scraper {
             }
             return ScrapedResult.of(company, dividends);
         } catch (IOException e) {
-            //TODO: 예외처리
-            throw new RuntimeException(e);
+            log.error("Invalid URL {}", url);
+            throw new ScraperException(ErrorCode.FAILED_GET_DOCUMENT, e);
         }
     }
 
     @Override
     public Optional<CompanyDto> scrapCompanyByTicker(String ticker) {
+        String url = String.format(SUMMARY_URL, ticker, ticker);
         try {
-            Document document = Jsoup.connect(String.format(SUMMARY_URL, ticker, ticker)).get();
+            Document document = Jsoup.connect(url).get();
             Element titleEle = document.getElementsByTag("h1").get(0);
             String title = titleEle.text().split("\\(")[0].trim();
             return Optional.of(CompanyDto.of(ticker, title));
         } catch (IOException e) {
-            //TODO: 예외처리
-            e.printStackTrace();
+            log.error("{} => Invalid URL {}", ErrorCode.FAILED_GET_DOCUMENT, url);
         }
         return Optional.empty();
     }
