@@ -51,7 +51,7 @@ class ScraperSchedulerTest {
         given(companyRepository.findAll()).willReturn(List.of(company));
         given(scraper.scrap(any())).willReturn(ScrapedResult.of(CompanyDto.fromEntity(company), List.of(dividendDto)));
         given(dividendRepository.existsByCompanyIdAndDate(anyLong(), any())).willReturn(false);
-        given(dividendRepository.saveAll(anyList())).willReturn(List.of(dividendDto.toEntity(company.getId())));
+        given(dividendRepository.saveAll(anyList())).willReturn(List.of(dividendDto.toEntity(company)));
         //when
         scraperScheduler.yahooFinanceSchedule();
         //then

@@ -27,6 +27,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -60,7 +61,6 @@ class CompanyServiceTest {
         given(scraper.scrap(any()))
                 .willReturn(ScrapedResult.of(companyDto, List.of(dividendDto)));
         Dividend dividend = Dividend.builder()
-                .companyId(1L)
                 .date(time)
                 .dividend(divide)
                 .build();
@@ -121,5 +121,26 @@ class CompanyServiceTest {
         //then
         assertThat(companies.size()).isEqualTo(1);
         assertThat(companies.get(0)).isEqualTo(name);
+    }
+
+    @DisplayName("기업 삭제")
+    @Test
+    void deleteCompany() {
+        //given
+        String ticker = "NVDA";
+        String name = "NVIDIA";
+        Company company = Company.builder()
+                .id(1L)
+                .ticker(ticker)
+                .name(name)
+                .build();
+        given(companyRepository.findByTicker(anyString()))
+                .willReturn(Optional.of(company));
+        willDoNothing().given(dividendRepository).deleteAllByCompanyId(anyLong());
+        willDoNothing().given(companyRepository).delete(any());
+        //when
+        String companyName = companyService.deleteCompany(ticker);
+        //then
+        assertThat(companyName).isEqualTo(name);
     }
 }

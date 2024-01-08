@@ -38,7 +38,7 @@ public class ScraperScheduler {
             dividendRepository.saveAll(
                     scrapedResult.getDividends().stream()
                             .filter(e -> !dividendRepository.existsByCompanyIdAndDate(company.getId(), e.getDate()))
-                            .map(e -> e.toEntity(company.getId()))
+                            .map(e -> e.toEntity(company))
                             .toList()
             );
             try {

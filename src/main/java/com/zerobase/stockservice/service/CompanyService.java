@@ -60,7 +60,7 @@ public class CompanyService {
         ScrapedResult scrapedResult = yahooFinanceScraper.scrap(companyDto);
         dividendRepository.saveAll(
                 scrapedResult.getDividends().stream()
-                        .map(e -> e.toEntity(companyEntity.getId()))
+                        .map(e -> e.toEntity(companyEntity))
                         .collect(Collectors.toList())
         );
 

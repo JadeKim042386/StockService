@@ -22,7 +22,9 @@ public class Dividend {
     @Id
     @GeneratedValue
     private Long id;
-    private Long companyId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "companyId")
+    private Company company;
     private LocalDateTime date;
     private String dividend;
 }

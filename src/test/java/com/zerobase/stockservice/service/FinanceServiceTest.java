@@ -38,7 +38,7 @@ class FinanceServiceTest {
         LocalDateTime now = LocalDateTime.now();
         String dividend = "0.05";
         given(dividendRepository.findAllByCompanyId(anyLong()))
-                .willReturn(List.of(Dividend.builder().id(1L).dividend(dividend).date(now).companyId(1L).build()));
+                .willReturn(List.of(Dividend.builder().id(1L).dividend(dividend).date(now).build()));
         //when
         ScrapedResult scrapedResult = financeService.getDividendByCompanyName(companyName);
         //then

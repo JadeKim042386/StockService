@@ -17,8 +17,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @RequiredArgsConstructor
 public class CacheConfig {
-    private final RedisProps redisProps;
-
     /**
      * https://docs.spring.io/spring-data/redis/docs/2.7.18/reference/html/#redis:support:cache-abstraction
      */
@@ -37,7 +35,7 @@ public class CacheConfig {
      * https://docs.spring.io/spring-data/redis/docs/2.7.18/reference/html/#redis:reactive:connectors:lettuce
      */
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory(RedisProps redisProps) {
         return new LettuceConnectionFactory(
                 new RedisStandaloneConfiguration(redisProps.host(), redisProps.port())
         );

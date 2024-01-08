@@ -53,13 +53,13 @@ public class CompanyController {
     
     @DeleteMapping("/{ticker}")
     @PreAuthorize("hasRole('WRITE')")
-    public ResponseEntity<?> deleteCompany(@PathVariable String ticker) {
+    public ResponseEntity<String> deleteCompany(@PathVariable String ticker) {
         String companyName = companyService.deleteCompany(ticker);
         clearFinanceCache(companyName);
         return ResponseEntity.ok(companyName);
     }
 
-    public void clearFinanceCache(String companyName) {
+    private void clearFinanceCache(String companyName) {
         Cache cache = redisCacheManager.getCache(CacheKey.KEY_FINANCE);
         if (Objects.isNull(cache)) {
             throw new CompanyException(ErrorCode.NOT_EXIST_CACHE);

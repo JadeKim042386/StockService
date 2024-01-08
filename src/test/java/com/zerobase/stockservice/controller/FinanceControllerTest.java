@@ -1,5 +1,7 @@
 package com.zerobase.stockservice.controller;
 
+import com.zerobase.stockservice.config.TestCacheConfig;
+import com.zerobase.stockservice.config.TestSecurityConfig;
 import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.DividendDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
@@ -9,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -21,11 +25,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FinanceController.class)
+@Import(value = {TestSecurityConfig.class, TestCacheConfig.class})
 class FinanceControllerTest {
     @Autowired private MockMvc mvc;
     @MockBean private FinanceService financeService;
 
     @DisplayName("기업명으로 배당금 정보 조회 요청")
+    @WithMockUser
     @Test
     void searchFinance() throws Exception {
         //given
