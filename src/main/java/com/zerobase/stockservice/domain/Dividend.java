@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 )
 public class Dividend {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "companyId")

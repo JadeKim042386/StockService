@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity(name = "COMPANY")
 public class Company {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(unique = true)
     private String ticker;

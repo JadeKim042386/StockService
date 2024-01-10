@@ -73,6 +73,8 @@ public class YahooFinanceScraper implements Scraper {
             return Optional.of(CompanyDto.of(ticker, title));
         } catch (IOException e) {
             log.error("{} => Invalid URL {}", ErrorCode.FAILED_GET_DOCUMENT, url);
+        } catch (IndexOutOfBoundsException e){
+            log.error("{}는 존재하지않는 기업입니다.", ticker);
         }
         return Optional.empty();
     }
