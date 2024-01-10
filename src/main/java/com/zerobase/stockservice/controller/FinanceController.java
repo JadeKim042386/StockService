@@ -1,5 +1,6 @@
 package com.zerobase.stockservice.controller;
 
+import com.zerobase.stockservice.dto.ScrapedResult;
 import com.zerobase.stockservice.service.FinanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class FinanceController {
 
     @GetMapping("/dividend/{companyName}")
     @PreAuthorize("hasRole('READ')")
-    public ResponseEntity<?> searchFinance(@PathVariable String companyName) {
+    public ResponseEntity<ScrapedResult> searchFinance(@PathVariable String companyName) {
         return ResponseEntity.ok(financeService.getDividendByCompanyName(companyName));
     }
 }

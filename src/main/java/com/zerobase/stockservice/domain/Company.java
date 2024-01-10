@@ -2,10 +2,9 @@ package com.zerobase.stockservice.domain;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,4 +19,6 @@ public class Company {
     @Column(unique = true)
     private String ticker;
     private String name;
+    @OneToMany(mappedBy = "company")
+    private Set<Dividend> dividends = new HashSet<>();
 }

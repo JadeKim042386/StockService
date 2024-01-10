@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -25,7 +26,6 @@ import static org.mockito.BDDMockito.given;
 class FinanceServiceTest {
     @InjectMocks private FinanceService financeService;
     @Mock private CompanyRepository companyRepository;
-    @Mock private DividendRepository dividendRepository;
 
     @DisplayName("기업명으로 배당금 정보 조회")
     @Test
@@ -33,12 +33,16 @@ class FinanceServiceTest {
         //given
         String ticker = "NVDA";
         String companyName = "NVIDIA";
-        given(companyRepository.findByName(anyString()))
-                .willReturn(Optional.of(Company.builder().id(1L).name(companyName).ticker(ticker).build()));
         LocalDateTime now = LocalDateTime.now();
         String dividend = "0.05";
-        given(dividendRepository.findAllByCompanyId(anyLong()))
-                .willReturn(List.of(Dividend.builder().id(1L).dividend(dividend).date(now).build()));
+        Set<Dividend> dividends = Set.of(Dividend.builder().id(1L).dividend(dividend).date(now).build());
+        given(companyRepository.findByNameIgnoreCase(anyString()))
+                .willReturn(Optional.of(Company.builder()
+                        .id(1L)
+                        .name(companyName)
+                        .ticker(ticker)
+                        .dividends(dividends)
+                        .build()));
         //when
         ScrapedResult scrapedResult = financeService.getDividendByCompanyName(companyName);
         //then
