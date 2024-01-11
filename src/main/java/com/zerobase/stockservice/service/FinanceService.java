@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class FinanceService {
     private final CompanyRepository companyRepository;
 
-    @Cacheable(value = CacheKey.KEY_FINANCE, key = "#companyName")
+    @Cacheable(value = CacheKey.KEY_FINANCE, key = "#companyName.toUpperCase()")
     public ScrapedResult getDividendByCompanyName(String companyName) {
         Company company = companyRepository.findByNameIgnoreCase(companyName)
             .orElseThrow(() -> new CompanyException(ErrorCode.NOT_FOUND_COMPANY));
