@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = {CompanyException.class, AuthException.class, ScraperException.class})
-    public Response<String> handleDiaryException(CompanyException e) {
+    public Response<String> handleDiaryException(CustomException e) {
         return Response.error(e.getErrorMessage());
     }
 }
