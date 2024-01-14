@@ -21,4 +21,9 @@ public class CustomException extends RuntimeException {
         this.errorMessage = errorCode.getDescription() + "|" + causeException.getMessage();
         initCause(causeException);
     }
+
+    @Override
+    public String getMessage() {
+        return errorMessage;
+    }
 }

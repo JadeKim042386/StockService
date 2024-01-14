@@ -5,6 +5,8 @@ import com.zerobase.stockservice.domain.Dividend;
 import com.zerobase.stockservice.dto.CompanyDto;
 import com.zerobase.stockservice.dto.DividendDto;
 import com.zerobase.stockservice.dto.ScrapedResult;
+import com.zerobase.stockservice.exception.CompanyException;
+import com.zerobase.stockservice.exception.ErrorCode;
 import com.zerobase.stockservice.repository.CompanyRepository;
 import com.zerobase.stockservice.repository.DividendRepository;
 import com.zerobase.stockservice.scraper.Scraper;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -142,5 +145,20 @@ class CompanyServiceTest {
         String companyName = companyService.deleteCompany(ticker);
         //then
         assertThat(companyName).isEqualTo(name);
+    }
+
+    @DisplayName("기업 삭제 실패")
+    @Test
+    void failedDeleteCompany() {
+        //given
+        String ticker = "NVDA";
+        String name = "NVIDIA";
+        given(companyRepository.findByTicker(anyString()))
+                .willThrow(new CompanyException(ErrorCode.NOT_FOUND_COMPANY));
+        //when
+        assertThatThrownBy(() -> companyService.deleteCompany(ticker))
+                .isInstanceOf(CompanyException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_COMPANY);
+        //then
     }
 }
