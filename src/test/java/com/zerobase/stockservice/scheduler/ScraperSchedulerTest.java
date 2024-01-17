@@ -56,7 +56,7 @@ class ScraperSchedulerTest {
         scraperScheduler.yahooFinanceSchedule();
         //then
         verify(dividendRepository, times(1)).saveAll(dividendCaptor.capture());
-        assertThat(dividendCaptor.getValue().get(0).getDividend()).isEqualTo(divide);
+        assertThat(dividendCaptor.getValue().get(0).getAmount()).isEqualTo(divide);
         assertThat(dividendCaptor.getValue().get(0).getDate()).isEqualTo(now);
     }
 }

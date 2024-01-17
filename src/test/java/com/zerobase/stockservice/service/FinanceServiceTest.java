@@ -35,7 +35,7 @@ class FinanceServiceTest {
         String companyName = "NVIDIA";
         LocalDateTime now = LocalDateTime.now();
         String dividend = "0.05";
-        Set<Dividend> dividends = Set.of(Dividend.builder().id(1L).dividend(dividend).date(now).build());
+        Set<Dividend> dividends = Set.of(Dividend.builder().id(1L).amount(dividend).date(now).build());
         given(companyRepository.findByNameIgnoreCase(anyString()))
                 .willReturn(Optional.of(Company.builder()
                         .id(1L)

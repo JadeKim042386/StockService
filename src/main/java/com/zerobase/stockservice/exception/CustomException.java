@@ -4,12 +4,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CustomException extends RuntimeException {
-    private ErrorCode errorCode;
-    private String errorMessage;
+    private final ErrorCode errorCode;
+    private final String errorMessage;
 
     public CustomException(ErrorCode errorCode) {
         this.errorCode = errorCode;

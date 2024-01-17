@@ -5,7 +5,7 @@ insert into company(id, name, ticker) values
 (1, 'NVIDIA Corporation', 'NVDA'),
 (2, 'GameStop', 'GME');
 
-insert into dividend(id, company_id, date, dividend) values
+insert into dividend(id, company_id, date, amount) values
 (1, 1, '2024-01-10', '0.04'),
 (2, 1, '2024-01-09', '0.0375'),
 (3, 1, '2024-01-08', '0.04'),

@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR_CODE("내부 서버 오류가 발생했습니다."),
     INVALID_REQUEST("잘못된 요청입니다."),
+    NOT_FOUND_TABLE("테이블 element를 찾을 수 없습니다."),
     NOT_FOUND_COMPANY("존재하지 않는 기업입니다."),
     NOT_FOUND_MEMBER("존재하지 않는 유저입니다."),
     ALREADY_EXIST_TICKER("이미 존재하는 Ticker 입니다."),

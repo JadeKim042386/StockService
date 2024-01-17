@@ -31,11 +31,11 @@ public class DividendDto {
         return Dividend.builder()
                 .company(company)
                 .date(date)
-                .dividend(dividend)
+                .amount(dividend)
                 .build();
     }
 
     public static DividendDto fromEntity(Dividend dividend) {
-        return DividendDto.of(dividend.getDate(), dividend.getDividend());
+        return DividendDto.of(dividend.getDate(), dividend.getAmount());
     }
 }

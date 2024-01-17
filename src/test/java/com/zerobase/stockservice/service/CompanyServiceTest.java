@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,7 +66,7 @@ class CompanyServiceTest {
                 .willReturn(ScrapedResult.of(companyDto, List.of(dividendDto)));
         Dividend dividend = Dividend.builder()
                 .date(time)
-                .dividend(divide)
+                .amount(divide)
                 .build();
         given(dividendRepository.saveAll(anyList()))
                 .willReturn(List.of(dividend));
@@ -77,7 +78,7 @@ class CompanyServiceTest {
         verify(dividendRepository, times(1)).saveAll(dividendCaptor.capture());
         assertThat(companyCaptor.getValue().getName()).isEqualTo(name);
         assertThat(companyCaptor.getValue().getTicker()).isEqualTo(ticker);
-        assertThat(dividendCaptor.getValue().get(0).getDividend()).isEqualTo(divide);
+        assertThat(dividendCaptor.getValue().get(0).getAmount()).isEqualTo(divide);
         assertThat(dividendCaptor.getValue().get(0).getDate()).isEqualTo(time);
         assertThat(dto.getName()).isEqualTo(name);
         assertThat(dto.getTicker()).isEqualTo(ticker);
@@ -152,7 +153,6 @@ class CompanyServiceTest {
     void failedDeleteCompany() {
         //given
         String ticker = "NVDA";
-        String name = "NVIDIA";
         given(companyRepository.findByTicker(anyString()))
                 .willThrow(new CompanyException(ErrorCode.NOT_FOUND_COMPANY));
         //when

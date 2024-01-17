@@ -33,8 +33,12 @@ public class YahooFinanceScraper implements Scraper {
             Document document = Jsoup.connect(url).get();
             Elements parsingDivs = document.getElementsByAttributeValue("data-test", "historical-prices");
             Element tableEle = parsingDivs.get(0);
-
-            Element tbody = tableEle.children().get(1);
+            Elements children = tableEle.children();
+            if (children.isEmpty()) {
+                log.error("Not Found {} Table", company.getName());
+                throw new ScraperException(ErrorCode.NOT_FOUND_TABLE);
+            }
+            Element tbody = children.get(1);
             List<DividendDto> dividends = new ArrayList<>(tbody.children().size());
             for (Element e : tbody.children()) {
                 String txt = e.text();

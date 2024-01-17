@@ -26,5 +26,5 @@ public class Dividend {
     @JoinColumn(name = "companyId")
     private Company company;
     private LocalDateTime date;
-    private String dividend;
+    private String amount;
 }
